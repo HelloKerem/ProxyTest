@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Download ID (octet-stream)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding: 24px; }
+    .card { border: 1px solid #ddd; padding: 16px; border-radius: 8px; max-width: 720px; }
+    pre { background:#f6f6f6; padding:12px; border-radius:6px; overflow:auto; }
+    button { padding:8px 12px; border-radius:6px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Download `id` as application/octet-stream</h2>
+    <p>This page reads the <code>id</code> query parameter, displays it, and triggers a download containing that value.</p>
+
+    <div>
+      <strong>id (raw):</strong>
+      <pre id="idValue">—</pre>
+    </div>
+
+    <div style="margin-top:12px;">
+      <button id="downloadBtn">Download now</button>
+      <button id="checkStatusBtn">Check HTTP status of a URL (HEAD)</button>
+      <input id="urlInput" placeholder="https://example.com" style="margin-left:8px; width:320px;">
+      <div id="status" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <script>
+    //!! Used ChatGPT because github doesnt support php files and i dont know html
+
+      
+    // read query param as string (preserve everything)
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      // return null if not present, otherwise the raw string
+      return params.has(name) ? params.get(name) : null;
+    }
+
+    // JS equivalent of get_http_response_code($url) using HEAD
+    // returns numeric status code or null on network error / CORS issues
+    async function getHttpResponseCode(url) {
+      try {
+        // Use HEAD first; fall back to GET if server blocks HEAD
+        let resp = await fetch(url, { method: 'HEAD' });
+        if (!resp.ok && resp.type === 'opaque') {
+          // opaque response from cross-origin with no CORS; we can't get status
+          return null;
+        }
+        // if server refused HEAD, try GET (may return body)
+        if (resp.status === 405) {
+          resp = await fetch(url, { method: 'GET' });
+        }
+        return resp.status;
+      } catch (err) {
+        // network error, CORS, invalid url, etc.
+        return null;
+      }
+    }
+
+    // create and trigger a download with Content-Type application/octet-stream
+    function triggerDownload(filename, content) {
+      const blob = new Blob([content], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || 'download.bin';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      // cleanup
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    }
+
+    // main
+    (function() {
+      const id = getQueryParam('id');
+      const idEl = document.getElementById('idValue');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const checkStatusBtn = document.getElementById('checkStatusBtn');
+      const urlInput = document.getElementById('urlInput');
+      const statusEl = document.getElementById('status');
+
+      idEl.textContent = id === null ? '(no id provided in query string)' : id;
+
+      // If id exists, automatically trigger download to mimic die($id)
+      if (id !== null) {
+        // filename derived from id but sanitized (fallback to id.bin)
+        const safeName = String(id).replace(/[^a-zA-Z0-9._-]/g, '_') || 'id';
+        triggerDownload(safeName + '.bin', id);
+      }
+
+      downloadBtn.addEventListener('click', () => {
+        const content = id === null ? '' : id;
+        const safeName = (id === null ? 'id' : String(id).replace(/[^a-zA-Z0-9._-]/g, '_')) || 'id';
+        triggerDownload(safeName + '.bin', content);
+      });
+
+      checkStatusBtn.addEventListener('click', async () => {
+        const url = urlInput.value.trim();
+        if (!url) {
+          statusEl.textContent = 'Enter a URL first.';
+          return;
+        }
+        statusEl.textContent = 'Checking...';
+        const code = await getHttpResponseCode(url);
+        if (code === null) {
+          statusEl.textContent = 'Could not retrieve status (network error, invalid URL, or blocked by CORS).';
+        } else {
+          statusEl.textContent = 'HTTP status: ' + code;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
