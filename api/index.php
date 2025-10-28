@@ -1,5 +1,6 @@
 <?php
 header('Pragma: no-cache');
+header("Content-Type: application/octet-stream");
 if(!isset($_GET['id'])){
     http_response_code(404);
     die("No assetId supplied."); // dont need to make errors pretty
@@ -13,7 +14,6 @@ if($assetId === 0){
     }
     die($someserver);
 }
-header("Content-Type: application/octet-stream");
 $handle = @fopen("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}", 'rb');
 die($handle);
 if ($handle) {
