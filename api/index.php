@@ -16,7 +16,10 @@ if ($someserver === false) {
 }
 header("Content-Type: application/octet-stream");
 $ok = @file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}");
-if (!$ok === true) {
+if (!$ok === true) && (!file_get_contents($ok) === "") {
     die($ok);
+} {
+    http_response_code(404);
+    die("Asset does not exists");
 }
 ?>
