@@ -6,7 +6,7 @@ if(!isset($_GET['id'])){
 }
 $assetId = (int)$_GET['id'];
 if($assetId === 0){
-    $someserver = @file_get_contents("https://gitgud.io/nina11/my-guegue-project/-/raw/master/Assets/{$assetId}");
+    $someserver = @file_get_contents("https://gitgud.io/nina11/my-guegue-project/-/raw/master/Assets/{$_GET['id']}");
     if ($someserver === false) {
         http_response_code(404);
         die("No assetId supplied.");
@@ -15,6 +15,7 @@ if($assetId === 0){
 }
 header("Content-Type: application/octet-stream");
 $handle = @fopen("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}", 'rb');
+die($handle);
 if ($handle) {
     header("Content-Type: application/octet-stream");
     while (!feof($handle)) {
