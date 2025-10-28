@@ -13,13 +13,14 @@ if($assetId === 0){
         CURLOPT_TIMEOUT => 10,
     ]);
     $data = curl_exec($ch);
-    $something = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     curl_close($ch);
     if ($code !== 200 || $data === false) {
         http_response_code(404);
         die("No assetId supplied.");
     }
-    die($something);
+    echo $data
+    exit;
 }
 $main = @file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}");
 if ($main === false) {
