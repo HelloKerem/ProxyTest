@@ -5,8 +5,8 @@ header('Expires: 0');
 $assetId = isset($_GET['assetId']) ? $_GET['assetId'] : 0;
 
 if (!isset($_GET['assetId']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['assetId'])) {
-    echo file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}")
-    exit
+    echo file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}");
+    exit;
 }
 
 // Use fopen() on the remote file
