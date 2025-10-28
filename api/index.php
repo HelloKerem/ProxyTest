@@ -11,7 +11,17 @@ if($assetId === 0){
         http_response_code(404);
         die("No assetId supplied.");
     }
-    die($someserver);
+    $something = @file_get_contents("https://file.garden/aNTqSg4ZkRNIiewL/Assets/{$_GET['id']}");
+    if ($something === false) {
+        http_response_code(404);
+        die("No assetId supplied.");
+    }
+    die($something);
 }
-die(@file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}"));
+$main = @file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}");
+if ($main === false) {
+    http_response_code(404);
+    die("Asset does not exist.");
+}
+die($main);
 ?>
