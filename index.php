@@ -8,15 +8,24 @@ if (!isset($_GET['assetId']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['assetId
     die("No valid assetId supplied.");
 }
 
-$assetId = $_GET['assetId']; // keep it as string
+$assetId = $_GET['assetId'];
 $assetUrl = "https://gitgud.io/nina11/my-guegue-project/-/raw/master/Assets/{$assetId}";
 
-$assetcontent = @file_get_contents($assetUrl);
-if ($assetcontent === false) {
+// Use fopen() on the remote file
+$handle = @fopen($assetUrl, 'rb');
+if (!$handle) {
     http_response_code(404);
-    die("Asset not found.");
+    die("Asset not found or remote fetch failed.");
 }
 
+// Set headers for download
 header("Content-Type: application/octet-stream");
-echo $assetcontent;
+header("Content-Disposition: attachment; filename=\"{$assetId}\"");
+
+// Stream file to client
+while (!feof($handle)) {
+    echo fread($handle, 8192);
+    flush();
+}
+fclose($handle);
 exit;
