@@ -7,7 +7,7 @@ header("Content-Type: application/octet-stream");
 $assetId = isset($_GET['assetId']) ? $_GET['assetId'] : 1;
 
 // Validate assetId
-if (!preg_match('/^[a-zA-Z0-9_-]+$/', $assetId)) {
+if (!isset($_GET['assetId']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['assetId'])) {
     // Fallback fetch
     $fallback = @file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}");
     if ($fallback === false) {
