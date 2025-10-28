@@ -14,10 +14,16 @@ if($assetId === 0){
     die($someserver);
 }
 header("Content-Type: application/octet-stream");
-$ok = @file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}");
-if ($ok !== false && $ok !== "") {
-    die($ok);
-} {
+$handle = @fopen("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}", 'rb');
+if ($handle) {
+    header("Content-Type: application/octet-stream");
+    while (!feof($handle)) {
+        echo fread($handle, 8192);
+        flush();
+    }
+    fclose($handle);
+    exit;
+} else {
     http_response_code(404);
     die("Asset does not exist.");
 }
