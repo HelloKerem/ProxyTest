@@ -19,7 +19,7 @@ if($assetId === 0){
         http_response_code(404);
         die("No assetId supplied.");
     }
-    echo $data
+    echo $data;
     exit;
 }
 $main = @file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}");
