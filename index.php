@@ -1,20 +1,22 @@
 <?php
 header('Pragma: no-cache');
-// this is used by the launcher webserver
-if(!isset($_GET['assetId'])){
-http_response_code(404);
-die("No assetId supplied."); // dont need to make errors pretty
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Expires: 0');
+
+if (!isset($_GET['assetId']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['assetId'])) {
+    http_response_code(404);
+    die("No valid assetId supplied.");
 }
-$assetId = (int)$_GET['assetId'];
-if($assetId === 0){
-http_response_code(404);
-die("No assetId supplied."); // dont need to make errors pretty
-}
-header("Content-Type: application/octet-stream");
+
+$assetId = $_GET['assetId']; // keep it as string
 $assetUrl = "https://gitgud.io/nina11/my-guegue-project/-/raw/master/Assets/{$assetId}";
-$assetcontent = file_get_contents($assetUrl);
-$fopenthing = fopen($assetcontent, 'r');
-$assetcontent = stream_get_contents($fopenthing);
-fclose($fopenthing);
-die($assetcontent);
-?>
+
+$assetcontent = @file_get_contents($assetUrl);
+if ($assetcontent === false) {
+    http_response_code(404);
+    die("Asset not found.");
+}
+
+header("Content-Type: application/octet-stream");
+echo $assetcontent;
+exit;
