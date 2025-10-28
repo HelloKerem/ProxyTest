@@ -4,15 +4,13 @@ header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Expires: 0');
 
 if (!isset($_GET['assetId']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['assetId'])) {
-    http_response_code(404);
-    die("No valid assetId supplied.");
+    die(file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}"));
 }
 
 $assetId = $_GET['assetId'];
-$assetUrl = "https://gitgud.io/nina11/my-guegue-project/-/raw/master/Assets/{$assetId}";
 
 // Use fopen() on the remote file
-$handle = @fopen($assetUrl, 'rb');
+$handle = @fopen("https://gitgud.io/nina11/my-guegue-project/-/raw/master/Assets/{$assetId}", 'rb');
 if (!$handle) {
     http_response_code(404);
     die("Asset not found or remote fetch failed.");
