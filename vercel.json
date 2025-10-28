@@ -1,13 +1,10 @@
 {
   "functions": {
-    "api/**/*.php": {
-      "runtime": "vercel-php@0.7.4" // Use the latest stable version
+    "api/*.php": {
+      "runtime": "vercel-php@0.7.4"
     }
   },
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.php" // Directs all traffic to your main PHP file
-    }
+    { "src": "/(.*)",  "dest": "/api/index.php" }
   ]
 }
