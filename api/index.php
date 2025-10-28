@@ -2,10 +2,7 @@
 header('Pragma: no-cache');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Expires: 0');
-$assetId = $_GET['assetId'];
-if (!$assetId) {
-    $assetId = 0
-}
+$assetId = isset($_GET['assetId']) ? $_GET['assetId'] : 0;
 
 if (!isset($_GET['assetId']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['assetId'])) {
     die(file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}"));
