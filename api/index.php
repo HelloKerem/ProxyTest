@@ -10,7 +10,7 @@ if($assetId === 0){
         http_response_code(404);
         die("No assetId supplied.");
     }
-    header("Location: https://file.garden/aNTqSg4ZkRNIiewL/Assets/{$_GET['id']}")
+    header("Location: https://file.garden/aNTqSg4ZkRNIiewL/Assets/{$_GET['id']}");
     exit;
 }
 header("Content-Type: application/octet-stream");
