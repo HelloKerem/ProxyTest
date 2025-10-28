@@ -2,12 +2,11 @@
 header('Pragma: no-cache');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Expires: 0');
+$assetId = $_GET['assetId'];
 
 if (!isset($_GET['assetId']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['assetId'])) {
     die(file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}"));
 }
-
-$assetId = $_GET['assetId'];
 
 // Use fopen() on the remote file
 $handle = @fopen("https://gitgud.io/nina11/my-guegue-project/-/raw/master/Assets/{$assetId}", 'rb');
