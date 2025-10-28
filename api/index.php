@@ -6,8 +6,16 @@ if(!isset($_GET['id'])){
 }
 $assetId = (int)$_GET['id'];
 if($assetId === 0){
-    $something = @file_get_contents("https://file.garden/aNTqSg4ZkRNIiewL/Assets/{$_GET['id']}");
-    if ($something === false) {
+    $ch = curl_init("https://file.garden/aNTqSg4ZkRNIiewL/Assets/{$_GET['id']}");
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_TIMEOUT => 10,
+    ]);
+    $data = curl_exec($ch);
+    $something = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+    if ($code !== 200 || $data === false) {
         http_response_code(404);
         die("No assetId supplied.");
     }
@@ -15,7 +23,7 @@ if($assetId === 0){
 }
 $main = @file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}");
 if ($main === false) {
-    http_response_code(404);
+    http_response_code(200);
     die("Asset does not exist.");
 }
 die($main);
