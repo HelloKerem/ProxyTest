@@ -1,5 +1,4 @@
 <?php
-header('Pragma: no-cache');
 header("Content-Type: application/octet-stream");
 if(!isset($_GET['id'])){
     http_response_code(404);
@@ -14,18 +13,5 @@ if($assetId === 0){
     }
     die($someserver);
 }
-$handle = @fopen("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}", 'rb');
-die($handle);
-if ($handle) {
-    header("Content-Type: application/octet-stream");
-    while (!feof($handle)) {
-        echo fread($handle, 8192);
-        flush();
-    }
-    fclose($handle);
-    exit;
-} else {
-    http_response_code(404);
-    die("Asset does not exist.");
-}
+die(@file_get_contents("http://rblprox.servehttp.com:81/fetchasset.php?assetId={$assetId}"));
 ?>
